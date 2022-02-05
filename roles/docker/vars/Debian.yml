@@ -1,0 +1,15 @@
+---
+docker_deps:
+  - 'apt-transport-https'
+  - 'ca-certificates'
+  - 'curl'
+  - 'software-properties-common'
+  - 'gnupg-agent'
+  - 'python3-pip'
+  - 'virtualenv'
+  - 'python3-setuptools'
+  - 'docker-compose'
+
+docker_packages:
+  - 'docker.io'
+  - 'docker-compose'

@@ -1,0 +1,100 @@
+---
+#
+# Tasks and roles for all hosts
+#
+- hosts: fleet
+  gather_facts: no
+
+  pre_tasks:
+    - import_tasks: tasks/ssh_juggle_port.yml
+      tags:
+        - port
+
+- hosts: fleet
+  become: yes
+  roles:
+
+    #
+    # Basics
+    #
+    - role: system
+      tags:
+        - system
+
+    - role: docker
+      tags:
+        - docker
+
+    - role: chriswayg.msmtp-mailer
+      tags:
+        - msmtp
+
+    - role: oefenweb.dns
+      tags:
+        - dns
+
+    - role: geerlingguy.ntp
+      tags:
+        - ntp
+
+
+    #
+    # Security
+    #
+    - role: security/fail2ban
+      tags:
+      - fail2ban
+
+    - role: security/iptables
+      tags:
+      - iptables
+      when: enable_iptables
+
+    - role: geerlingguy.security
+      tags:
+        - security
+
+    #
+    # Network
+    #
+    - role: network/pihole
+      become: no
+      when: enable_pihole | default(False)
+      tags:
+        - pihole
+        - containers
+
+    #
+    # Filesystems
+    #
+    - role: filesystems/hd-idle
+      become: yes
+      tags:
+        - hd-idle
+      when: enable_nas_stuff | default(False)
+
+    - role: stuvusit.smartd
+      become: yes
+      tags:
+        - smartd
+      when: enable_nas_stuff | default(False)
+
+    #
+    # Homer
+    #
+    - role: homer
+      become: no
+      tags:
+        - homer
+        - containers
+      when: enable_homer | default(False)
+
+    #
+    # Services
+    #
+    - role: containers/services/nextcloud
+      become: no
+      tags:
+        - nextcloud
+        - containers
+      when: enable_nextcloud | default(False)

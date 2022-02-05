@@ -1,0 +1,7 @@
+---
+roles:
+  - name: geerlingguy.security
+  - name: geerlingguy.ntp
+  - name: chriswayg.msmtp-mailer
+  - name: stuvusit.smartd
+  - name: oefenweb.dns
