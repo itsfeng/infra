@@ -3,14 +3,35 @@
   become: no
   git:
     repo: "{{ dotfiles_repo }}"
-    dest: "/home/{{ username }}/dotfiles"
+    dest: "/home/{{ username }}/dot"
+    recursive: no
+    force: yes
+
+- name: Create zsh-plugins folder
+  file:
+    path: "/home/{{ username }}/.config/zsh-plugins"
+    state: directory
+
+- name: Clone zsh-autosuggestions
+  become: no
+  git:
+    repo: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: "/home/{{ username }}/.config/zsh-plugins/zsh-autosuggestions"
+    recursive: no
+    force: yes
+
+- name: Clone zsh-syntax-highlighting
+  become: no
+  git:
+    repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
+    dest: "/home/{{ username }}/.config/zsh-plugins/zsh-syntax-highlightings"
     recursive: no
     force: yes
 
 - name: Stow the dotfiles
   become: no
   shell:
-    cmd: stow -v */
-    chdir: "/home/{{ username }}/dotfiles"
+    cmd: stow -d /home/{{ username }}/dot -t $HOME lnx
+    chdir: "/home/{{ username }}/dot"
   register: stow_result
   changed_when: stow_result.stdout != ""
