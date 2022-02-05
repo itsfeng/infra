@@ -1,0 +1,3 @@
+# remark: delete this line, do not change [groupname=fleet]
+[fleet]
+$HOSTNAME ansible_host=$IP ansible_user=$USER ansible_connection=ssh
