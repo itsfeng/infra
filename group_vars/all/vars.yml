@@ -56,7 +56,6 @@ extra_packages:
 version: focal
 apt_mirror: http://ftp.uni-mainz.de/ubuntu/
 
-
 #
 # Email credentials (for SMART and Snapraid error reporting)
 #
@@ -88,7 +87,6 @@ security_sudoers_passwordless: [ "{{ username }}" ]
 security_autoupdate_reboot: "true"
 security_autoupdate_mail_to: "{{ email }}"
 security_autoupdate_mail_on_error: true
-
 
 #
 # Enable/disable functionality
