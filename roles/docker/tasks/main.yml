@@ -15,7 +15,13 @@
 
   - name: Add Docker Repository
     apt_repository:
-      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+      repo: "deb https://download.docker.com/linux/ubuntu focal stable"
+      state: present
+
+  - name: Update apt and install docker-ce
+    apt:
+      update_cache: yes
+      name: "{{ docker_packages }}"
       state: present
 
   - name: Switch to iptables-legacy
@@ -40,11 +46,9 @@
       link: /usr/bin/python
       path: /usr/bin/python3
 
-- name: Update apt and install docker-ce
-  apt:
-    update_cache: yes
-    name: "{{ docker_packages }}"
-    state: present
+  - name: Install Docker Module for Python
+    pip:
+      name: docker
 
 - name: Ensure group docker exists
   group:
@@ -57,10 +61,6 @@
     groups:
       - docker
     append: yes
-
-- name: Install Docker Module for Python
-  pip:
-    name: docker
 
 - name: Make sure Docker is running and enabled
   service:
@@ -116,15 +116,6 @@
       mode: 0755
       recurse: yes
     when: not persistent_data.stat.exists
-
-  - name: Restore the "{{ docker_dir }}" folder from the MergerFS array
-    synchronize:
-      src: "{{ mergerfs_root }}/docker_data/data"
-      dest: "{{ docker_dir }}/"
-      delete: true
-      recurse: yes
-    delegate_to: "{{ inventory_hostname }}"
-    when: persistent_data_find.matched < 20 or not persistent_data.stat.exists
 
   - name: Chmod the data folder
     become: yes

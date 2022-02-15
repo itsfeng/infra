@@ -2,7 +2,7 @@
 - name: Set the name of a sudo group
   set_fact:
     sudo_group: sudo
-   
+
 - name: Create a login user
   user:
     name: "{{ username }}"
@@ -12,7 +12,7 @@
       - users
     state: present
     append: true
- 
+
 - name: Ensure group "{{ username }}" exists
   group:
     name: "{{ username }}"
@@ -27,7 +27,7 @@
     validate: '/usr/sbin/visudo -cf %s'
 
 - name: Copy the public SSH key 
-  become: no
+  become: yes
   authorized_key:
     user: "{{ username }}"
     state: present
@@ -35,13 +35,13 @@
   when: not ansible_check_mode
 
 - name: Set the default shell
-  become: no
+  become: yes
   user: 
     name: "{{ username }}"
     shell: "{{ shell }}"
 
 - name: Suppress login messages
-  become: no
+  become: yes
   file:
     name: /home/{{ username }}/.hushlogin
     mode: 0644
@@ -61,3 +61,13 @@
   with_items: "{{ additional_users }}"
   when: additional_users is defined
   no_log: true
+
+- name: Disable cron e-mail notifications
+  cron:
+    name: MAILTO
+    user: "{{ item }}"
+    env: yes
+    job: ""
+  with_items:
+    - root
+    - "{{ username }}"

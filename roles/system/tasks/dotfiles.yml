@@ -1,6 +1,6 @@
 ---
 - name: Clone the latest dotfiles repo
-  become: no
+  become: yes
   git:
     repo: "{{ dotfiles_repo }}"
     dest: "/home/{{ username }}/dot"
@@ -8,12 +8,13 @@
     force: yes
 
 - name: Create zsh-plugins folder
+  become: yes
   file:
     path: "/home/{{ username }}/.config/zsh-plugins"
     state: directory
 
 - name: Clone zsh-autosuggestions
-  become: no
+  become: yes
   git:
     repo: "https://github.com/zsh-users/zsh-autosuggestions"
     dest: "/home/{{ username }}/.config/zsh-plugins/zsh-autosuggestions"
@@ -21,17 +22,24 @@
     force: yes
 
 - name: Clone zsh-syntax-highlighting
-  become: no
+  become: yes
   git:
     repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "/home/{{ username }}/.config/zsh-plugins/zsh-syntax-highlightings"
+    dest: "/home/{{ username }}/.config/zsh-plugins/zsh-syntax-highlighting"
     recursive: no
     force: yes
 
+# - name: Move .bashrc to .old
+#   become: no
+#   command: mv /home/{{ username }}/.bashrc /home/{{ username }}/.bashrc.old
+
+# - name: Move .profile to .old
+#   become: no
+#   command: mv /home/{{ username }}/.profile /home/{{ username }}/.profile.old
+
 - name: Stow the dotfiles
-  become: no
+  become: yes
   shell:
-    cmd: stow -d /home/{{ username }}/dot -t $HOME lnx
-    chdir: "/home/{{ username }}/dot"
+    cmd: stow -d /home/{{ username }}/dot -t /home/{{ username }} lnx
   register: stow_result
   changed_when: stow_result.stdout != ""

@@ -9,7 +9,7 @@ docker_deps:
   - 'virtualenv'
   - 'python3-setuptools'
   - 'docker-compose'
+  - 'python3-pip'
 
 docker_packages:
-  - 'docker.io'
-  - 'docker-compose'
+  - 'docker-ce'

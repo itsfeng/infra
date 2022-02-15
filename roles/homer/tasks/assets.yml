@@ -9,13 +9,13 @@
 
 - name: Copy the icons
   copy:
-    src: "files/icons/{{ item.path.split('/')[-1] }}.png"
+    src: "files/icons/"
     dest: "{{ docker_dir }}/{{ container_name }}/tools/homer-icons"
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: 0644
-  when: lookup('vars', 'enable_' + item.path.split('/')[-1]) | default(False) and lookup('vars', item.path.split('/')[-1])['dashboard_url'] is defined
-  with_items: "{{ containers.files }}"
+  with_fileglob:
+    - "files/icons/*"
 
 - name: Copy the logo
   copy:

@@ -13,16 +13,3 @@ sender = {{ email }}
 enabled = true
 port = {{ security_ssh_port }}
 filter = sshd
-
-{% for name in installed_configs %}
-[{{ name }}]
-enabled  = true
-port     = http,https,{{ security_ssh_port }}
-{% if 'endlessh' in name %}
-action = %(action_)s
-maxretry = 0
-{% endif %}
-filter   = {{ name }}
-logpath  = %({{ name }}_log)s
-
-{% endfor %}

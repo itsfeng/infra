@@ -67,12 +67,3 @@
     group: root
     mode: '0644'
 
-- name: Disable cron e-mail notifications
-  cron:
-    name: MAILTO
-    user: "{{ item }}"
-    env: yes
-    job: ""
-  with_items:
-    - root
-    - "{{ username }}"

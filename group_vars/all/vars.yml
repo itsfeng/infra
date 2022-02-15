@@ -49,6 +49,7 @@ extra_packages:
   - iotop
   - ncdu
   - hddtemp
+  - net-tools
 
 #
 # Apt mirrors
@@ -89,12 +90,9 @@ security_autoupdate_mail_to: "{{ email }}"
 security_autoupdate_mail_on_error: true
 
 #
-# Enable/disable functionality
+# Enable/disable functionality / Smartd & Docker Folder
 #
-enable_nas_stuff: false
-
-# Public-facing services
-enable_nextcloud: true
+enable_nas_stuff: true
 
 # Homepages
 enable_homer: true

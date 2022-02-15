@@ -4,6 +4,7 @@
 #
 - hosts: fleet
   gather_facts: no
+  port: 69
 
   pre_tasks:
     - import_tasks: tasks/ssh_juggle_port.yml
@@ -12,6 +13,7 @@
 
 - hosts: fleet
   become: yes
+  port: 69
   roles:
 
     #
@@ -58,7 +60,7 @@
     # Network
     #
     - role: network/pihole
-      become: no
+      become: yes
       when: enable_pihole | default(False)
       tags:
         - pihole
@@ -83,18 +85,10 @@
     # Homer
     #
     - role: homer
-      become: no
+      become: yes
       tags:
         - homer
         - containers
       when: enable_homer | default(False)
 
-    #
-    # Services
-    #
-    - role: containers/services/nextcloud
-      become: no
-      tags:
-        - nextcloud
-        - containers
-      when: enable_nextcloud | default(False)
+
