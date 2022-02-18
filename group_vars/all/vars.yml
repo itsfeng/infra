@@ -17,6 +17,7 @@ lan_gateway: "192.168.178.1"
 dns_nameservers: ["1.1.1.1", "1.0.0.1"]
 keyboard_layout: us
 
+#username == user created during install
 username: hut
 guid: "1000"
 shell: /usr/bin/zsh
@@ -25,10 +26,6 @@ dotfiles_repo: https://github.com/itsfeng/dot
 boot_drive_serial: ""
 spindown_time: 600 # in seconds
 colorscheme: gruvbox
-
-subdomains: {
-      'nc': 'nextcloud'
-}
 
 #
 # Packages
@@ -83,7 +80,7 @@ msmtp_alias_default : "{{ email }}"
 #
 # SSH (geerlingguy.security)
 #
-security_ssh_port: 69
+security_ssh_port: 22
 security_sudoers_passwordless: [ "{{ username }}" ]
 security_autoupdate_reboot: "true"
 security_autoupdate_mail_to: "{{ email }}"

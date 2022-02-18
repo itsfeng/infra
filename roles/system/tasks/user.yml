@@ -3,21 +3,6 @@
   set_fact:
     sudo_group: sudo
 
-- name: Create a login user
-  user:
-    name: "{{ username }}"
-    password: "{{ password | password_hash('sha512') }}"
-    groups: 
-      - "{{ sudo_group }}"
-      - users
-    state: present
-    append: true
-
-- name: Ensure group "{{ username }}" exists
-  group:
-    name: "{{ username }}"
-    state: present
-
 - name: Allow 'sudo' group to have passwordless sudo
   lineinfile:
     path: /etc/sudoers
@@ -27,7 +12,6 @@
     validate: '/usr/sbin/visudo -cf %s'
 
 - name: Copy the public SSH key 
-  become: yes
   authorized_key:
     user: "{{ username }}"
     state: present
@@ -35,32 +19,22 @@
   when: not ansible_check_mode
 
 - name: Set the default shell
-  become: yes
   user: 
     name: "{{ username }}"
     shell: "{{ shell }}"
 
+- name: Set the default shell for root
+  user: 
+    name: "root"
+    shell: "{{ shell }}"
+
 - name: Suppress login messages
-  become: yes
   file:
     name: /home/{{ username }}/.hushlogin
     mode: 0644
     state: touch
     modification_time: preserve
     access_time: preserve
-
-- name: Create additional users (no login)
-  user:
-    name: "{{ item.name }}"
-    groups: "{{ item.groups }}"
-    password: "{{ item.password | password_hash('sha512') }}"
-    update_password: on_create
-    state: present
-    append: true
-    shell: /sbin/nologin
-  with_items: "{{ additional_users }}"
-  when: additional_users is defined
-  no_log: true
 
 - name: Disable cron e-mail notifications
   cron:

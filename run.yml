@@ -4,7 +4,6 @@
 #
 - hosts: fleet
   gather_facts: no
-  port: 69
 
   pre_tasks:
     - import_tasks: tasks/ssh_juggle_port.yml
@@ -13,13 +12,14 @@
 
 - hosts: fleet
   become: yes
-  port: 69
   roles:
 
     #
     # Basics
     #
     - role: system
+      become: yes
+      become_user: {{ username }}
       tags:
         - system
 
