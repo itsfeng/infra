@@ -1,7 +1,10 @@
 ---
 roles:
+  - name: 0x0i.systemd
+  - name: geerlingguy.docker
+  - name: oefenweb.ufw
   - name: geerlingguy.security
   - name: geerlingguy.ntp
-  - name: chriswayg.msmtp-mailer
   - name: stuvusit.smartd
   - name: oefenweb.dns
+  - name: newrelic.newrelic-infra

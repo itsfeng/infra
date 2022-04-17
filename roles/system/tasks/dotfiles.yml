@@ -1,99 +1,126 @@
 ---
 - name: Create gits folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ username }}/gits"
     state: directory
+    mode: 0700
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 - name: Clone the latest dotfiles repo
-  git:
+  remote_user: "{{ username }}"
+  ansible.builtin.git:
     repo: "{{ dotfiles_repo }}"
     dest: "/home/{{ username }}/gits/dot"
-    recursive: no
-    force: yes
+    recursive: false
+    force: true
+
+- name: Change file ownership for dotfiles
+  ansible.builtin.file:
+    path: "/home/{{ username }}/gits/dot"
+    recurse: true
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 - name: Create zsh-plugins folder
-  file:
+  ansible.builtin.file:
     path: "/home/{{ username }}/.config/zsh-plugins"
     state: directory
+    mode: 0700
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 - name: Clone zsh-autosuggestions
-  git:
-    repo: "https://github.com/zsh-users/zsh-autosuggestions"
+  remote_user: "{{ username }}"
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
     dest: "/home/{{ username }}/.config/zsh-plugins/zsh-autosuggestions"
-    recursive: no
-    force: yes
+    recursive: false
+    force: true
 
 - name: Clone zsh-syntax-highlighting
-  git:
-    repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
+  remote_user: "{{ username }}"
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting
     dest: "/home/{{ username }}/.config/zsh-plugins/zsh-syntax-highlighting"
-    recursive: no
-    force: yes
+    recursive: false
+    force: true
+
+- name: Change file ownership for zsh-plugins 
+  ansible.builtin.file:
+    path: "/home/{{ username }}/.config/zsh-plugins/"
+    recurse: true
+    owner: "{{ username }}"
+    group: "{{ username }}"
 
 # - name: Move .bashrc to .old
-#   become: no
+#   become: false
 #   command: mv /home/{{ username }}/.bashrc /home/{{ username }}/.bashrc.old
 
 # - name: Move .profile to .old
-#   become: no
+#   become: false
 #   command: mv /home/{{ username }}/.profile /home/{{ username }}/.profile.old
 
 - name: Stow the dotfiles lnx
-  become: yes
-  shell:
+  remote_user: "{{ username }}"
+  ansible.builtin.shell:
     cmd: stow -d /home/{{ username }}/gits/dot -t /home/{{ username }} lnx
-  register: stow_result
-  changed_when: stow_result.stdout != ""
 
 - name: Stow the dotfiles nvim
-  become: yes
-  shell:
+  remote_user: "{{ username }}"
+  ansible.builtin.shell:
     cmd: stow -d /home/{{ username }}/gits/dot -t /home/{{ username }} nvim
-  register: stow_result
-  changed_when: stow_result.stdout != ""
 
+#
 # do the same for root
-- name: Create gits folder
-  file:
-    path: "/root/gits"
+- name: Create gits folder (root)
+  become: true
+  ansible.builtin.file:
+    path: /root/gits
     state: directory
+    mode: 0700
+    owner: root
+    group: root
 
-- name: Clone the latest dotfiles repo
-  git:
+- name: Clone the latest dotfiles repo (root)
+  become: true
+  ansible.builtin.git:
     repo: "{{ dotfiles_repo }}"
-    dest: "/root/gits/dot"
-    recursive: no
-    force: yes
+    dest: /root/gits/dot
+    recursive: false
+    force: true
 
-- name: Create zsh-plugins folder
-  file:
-    path: "/root/.config/zsh-plugins"
+- name: Create zsh-plugins folder (root)
+  become: true
+  ansible.builtin.file:
+    path: /root/.config/zsh-plugins
     state: directory
+    mode: 0700
+    owner: root
+    group: root
 
-- name: Clone zsh-autosuggestions
-  git:
-    repo: "https://github.com/zsh-users/zsh-autosuggestions"
-    dest: "/root/.config/zsh-plugins/zsh-autosuggestions"
-    recursive: no
-    force: yes
+- name: Clone zsh-autosuggestions (root)
+  become: true
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: /root/.config/zsh-plugins/zsh-autosuggestions
+    recursive: false
+    force: true
 
-- name: Clone zsh-syntax-highlighting
-  git:
-    repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
-    dest: "/root/.config/zsh-plugins/zsh-syntax-highlighting"
-    recursive: no
-    force: yes
+- name: Clone zsh-syntax-highlighting (root)
+  become: true
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting
+    dest: /root/.config/zsh-plugins/zsh-syntax-highlighting
+    recursive: false
+    force: true
 
-- name: Stow the dotfiles lnx
-  become: yes
-  shell:
+- name: Stow the dotfiles lnx (root)
+  become: true
+  ansible.builtin.shell:
     cmd: stow -d /root/gits/dot -t /root lnx
-  register: stow_result
-  changed_when: stow_result.stdout != ""
 
-- name: Stow the dotfiles nvim
-  become: yes
-  shell:
+- name: Stow the dotfiles nvim (root)
+  become: true
+  ansible.builtin.shell:
     cmd: stow -d /root/gits/dot -t /root nvim
-  register: stow_result
-  changed_when: stow_result.stdout != ""

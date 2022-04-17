@@ -1,64 +1,44 @@
 ---
-- name: Ubuntu specific tasks
-  become: yes
-  when: ansible_facts['distribution'] == 'Ubuntu'
-  block:
-  - name: Remove cloud-config to avoid boot delay
-    apt:
-      name: cloud-config
-      state: absent
-
-  - name: Make sure iSCSId and Open-iSCSId services are disabled
-    service:
-      name: "{{ item }}"
-      state: stopped
-      enabled: no
-    with_items:
-      - iscsid
-      - open-iscsi
-
-  - name: Install the apt mirror list
-    template:
-      src: sources.list.j2
-      dest: /etc/apt/sources.list
-      owner: root
-      group: root
-      mode: 0644
-    tags: mirrors
-
 - name: Generate the locale (Debian and Ubuntu)
+  become: true
   when: ansible_os_family == 'Debian'
   locale_gen:
     name: "{{ locale }}"
     state: present
 
 - name: Update and upgrade apt packages (Debian and Ubuntu)
+  become: true
   when: ansible_os_family == 'Debian'
-  apt:
-    upgrade: yes
-    autoremove: yes
-    update_cache: yes
+  ansible.builtin.apt:
+    upgrade: true
+    autoremove: true
+    update_cache: true
 
 - name: Check if reboot required
-  stat:
+  become: true
+  ansible.builtin.stat:
     path: /var/run/reboot-required
   register: reboot_required_file
 
 - name: Reboot if required
-  reboot:
+  become: true
+  ansible.builtin.reboot:
     msg: Rebooting due to a kernel update
   when: reboot_required_file.stat.exists
 
 - name: Install extra packages
-  package:
+  become: true
+  ansible.builtin.package:
     name: "{{ extra_packages }}"
     state: present
 
 - name: Set the hostname
-  hostname:
+  become: true
+  ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
 
 - name: Replace the hostname entry with our own
+  become: true
   ansible.builtin.lineinfile:
     path: /etc/hosts
     insertafter: ^127\.0\.0\.1 *localhost
@@ -66,4 +46,3 @@
     owner: root
     group: root
     mode: '0644'
-

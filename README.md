@@ -1,32 +1,29 @@
 # infra
 
-## Usage
-Install Ansible (macOS):
-```
-brew install ansible
-```
+## Prerequisites
+- Debian Install
+- expecting user with given name (see private host_vars)
+- expecting ssh on default port
+- sudo installed
+  - passwordless sudo enabled
+  - replace sudo statement in /etc/sudoers with:
+  - `%sudo ALL=(ALL) NOPASSWD: ALL`
+  - add normal user to sudo group:  `usermod -a -G sudo fng`
+- volume mounts are not done in here
 
+## Usage
 Create a host varialbe file and adjust the variables:
 ```
 cd infra/ansible
-mkdir -p host_vars/YOUR_HOSTNAME
-vi host_vars/YOUR_HOSTNAME/vars.yml
+mkdir -p host_vars/$YOUR_HOSTNAME
+vi host_vars/$YOUR_HOSTNAME/vars.yml
 ```
-
-Create a Keychain item for your Ansible Vault password (on macOS):
-```
-security add-generic-password \
-               -a YOUR_USERNAME \
-               -s ansible-vault-password \
-               -w
-```
-
-The `pass.sh` script will extract the Ansible Vault password from your Keychain automatically each time Ansible requests it.
+or get the non-pub files from secrets store
 
 Create an encrypted `secret.yml` file and adjust the variables:
 ```
-ansible-vault create host_vars/YOUR_HOSTNAME/secret.yml
-ansible-vault edit host_vars/YOUR_HOSTNAME/secret.yml
+ansible-vault create host_vars/$YOUR_HOSTNAME/secret.yml
+ansible-vault edit host_vars/$YOUR_HOSTNAME/secret.yml
 ```
 
 Add your custom inventory file to `hosts`:
@@ -42,7 +39,7 @@ ansible-galaxy install -r requirements.yml
 
 Finally, run the playbook:
 ```
-ansible-playbook run.yml -l your-host-here -K
+ansible-playbook run.yml -l $YOUR_HOSTNAME -K
 ```
 The "-K" parameter is only necessary for the first run, since the playbook configures passwordless sudo for the main login user
 
