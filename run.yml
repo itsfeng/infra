@@ -41,3 +41,10 @@
       become: true
       tags:
         - smartd
+
+    #
+    # newrelic
+    - role: newrelic.newrelic-infra
+      become: true
+      tags:
+        - newrelic

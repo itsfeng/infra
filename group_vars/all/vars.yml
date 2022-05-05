@@ -1,6 +1,6 @@
 ---
 #
-# Misc
+## Misc
 hostname: "{{ inventory_hostname }}"
 timezone: Europe/Berlin
 ntp_timezone: "{{ timezone }}"
@@ -10,7 +10,7 @@ shell: /usr/bin/zsh
 docker_dir: /opt/docker/data
 
 #
-# Docker
+## Docker
 docker_edition: 'ce'
 docker_service_state: started
 docker_service_enabled: true
@@ -19,13 +19,14 @@ docker_users:
   - "{{ username }}"
 
 #
-# Email credentials (for SMART and Snapraid error reporting)
+## Email credentials (for SMART and Snapraid error reporting)
 email: taika-nas@e7n.org
 email_login: "{{ email }}"
 email_smtp_host: smtp.mailbox.org
 email_smtp_port: 465
 email_smtp_port_startls: 587
 
+#
 ## MSMTP
 msmtp_default_account: "mailbox"
 msmtp_alias_default: "{{ email }}"
@@ -39,5 +40,11 @@ msmtp_accounts:
     password: "{{ email_password }}"
 
 #
-# SMART error reporting
+## SMART error reporting
 smartd_default_mail_recipients: ["{{ email }}"]
+
+#
+## newrelic integrations
+nrinfragent_integrations:
+  - name: docker
+    state: latest
